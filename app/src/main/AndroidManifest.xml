@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DontDistract">
         <activity
+            android:name=".WorkSessionActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
