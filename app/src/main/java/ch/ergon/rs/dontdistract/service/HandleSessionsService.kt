@@ -62,4 +62,25 @@ class HandleSessionsService : Service() {
         editor.putString("WORKING_SESSIONS", savedSessionAsString)
         editor.apply()
     }
+
+    fun changeRemainingMinutesByListIndex(listIndex: Int, newRemainingMilliSeconds: Int) {
+        val sharedPreferences = getSharedPreferences("dontDistract", Context.MODE_PRIVATE)
+
+        var savedSessions = getSavedSessions().toMutableList()
+
+        val sessionToChange = savedSessions[listIndex]
+
+        val newSession =
+            WorkingSession(newRemainingMilliSeconds, sessionToChange.endDate, sessionToChange.name)
+
+        savedSessions.removeAt(listIndex)
+
+        savedSessions.add(listIndex, newSession)
+
+        val savedSessionAsString = Json.encodeToString(savedSessions)
+
+        val editor = sharedPreferences.edit()
+        editor.putString("WORKING_SESSIONS", savedSessionAsString)
+        editor.apply()
+    }
 }

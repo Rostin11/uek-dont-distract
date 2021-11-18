@@ -27,7 +27,11 @@ class CreateSessionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_session)
         var dateView = findViewById<CalendarView>(R.id.dateView)
-        currentSelectedDate = SessionDate(LocalDate.now().year,LocalDate.now().monthValue,LocalDate.now().dayOfMonth)
+        currentSelectedDate = SessionDate(
+            LocalDate.now().year,
+            LocalDate.now().monthValue,
+            LocalDate.now().dayOfMonth
+        )
 
         dateView.setOnDateChangeListener(OnDateChangeListener { view, year, month, dayOfMonth ->
             currentSelectedDate = SessionDate(year, month + 1, dayOfMonth)
@@ -43,19 +47,19 @@ class CreateSessionActivity : AppCompatActivity() {
         val sessionName = sessionNameView.text.toString()
         var minutes = 0;
 
-            val stundenViewText = stundenView.text.toString()
-            if (stundenViewText != "") {
-                minutes += stundenViewText.toInt() * 60
-            }
-            val minutenViewText = minutenView.text.toString()
-            if (minutenViewText != "") {
-                minutes += minutenViewText.toInt()
-            }
+        val stundenViewText = stundenView.text.toString()
+        if (stundenViewText != "") {
+            minutes += stundenViewText.toInt() * 60
+        }
+        val minutenViewText = minutenView.text.toString()
+        if (minutenViewText != "") {
+            minutes += minutenViewText.toInt()
+        }
 
 
 
-        if (!sessionName.equals("") && currentSelectedDate != null){
-            val workingSession = WorkingSession(minutes , currentSelectedDate!!,sessionName)
+        if (!sessionName.equals("") && currentSelectedDate != null) {
+            val workingSession = WorkingSession(minutes * 60000, currentSelectedDate!!, sessionName)
 
             mService.saveNewSession(workingSession)
 
@@ -64,7 +68,6 @@ class CreateSessionActivity : AppCompatActivity() {
         } else {
 
         }
-
 
 
     }

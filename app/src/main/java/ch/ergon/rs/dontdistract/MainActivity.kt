@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
                     intent.putExtra(LIST_INDEX, i)
                     intent.putExtra(NAME, workingSession.name)
                     intent.putExtra(END_DATE, workingSession.endDate)
-                    intent.putExtra(REMAINING_SECONDS, workingSession.remainingMinutes)
+                    intent.putExtra(REMAINING_SECONDS, workingSession.remainingMilliSeconds)
                     startActivity(intent)
                 }
             })

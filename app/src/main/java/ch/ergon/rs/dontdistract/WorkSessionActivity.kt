@@ -38,7 +38,7 @@ class WorkSessionActivity : AppCompatActivity() {
             mBound = true
             deleteButton.setOnClickListener(object : View.OnClickListener {
                 override fun onClick(v: View?) {
-                    stopTimer()
+                    timerRunning = false
                     mService.deleteSessionByListIndex(listIndex)
                     var intent = Intent(this@WorkSessionActivity, MainActivity::class.java)
                     startActivity(intent)
@@ -70,10 +70,11 @@ class WorkSessionActivity : AppCompatActivity() {
 
         listIndex = intent.extras?.get(MainActivity.LIST_INDEX).toString().toInt()
         val sessionName = intent.extras?.get(MainActivity.NAME).toString()
-        val remainingMinutes = intent.extras?.get(MainActivity.REMAINING_SECONDS).toString().toInt()
+        val remainingMilliSeconds =
+            intent.extras?.get(MainActivity.REMAINING_SECONDS).toString().toInt()
         val endDate = intent.extras?.get(MainActivity.END_DATE) as SessionDate
 
-        milliSecondsLeft = remainingMinutes * 60000
+        milliSecondsLeft = remainingMilliSeconds
 
         countDownText = findViewById(R.id.countDownTextView)
         sessionNameField = findViewById(R.id.sessionNameField)
@@ -126,8 +127,16 @@ class WorkSessionActivity : AppCompatActivity() {
     }
 
     fun updateTimer() {
-        val hours: Int = milliSecondsLeft / 3600000
-        val minutes: Int = (milliSecondsLeft % 3600000) / 60000
+        val millisecondsToShow: Int
+
+        if (milliSecondsLeft % 60000 == 0) {
+            millisecondsToShow = milliSecondsLeft
+        } else {
+            millisecondsToShow = milliSecondsLeft + 60000
+        }
+        milliSecondsLeft
+        val hours: Int = millisecondsToShow / 3600000
+        val minutes: Int = (millisecondsToShow % 3600000) / 60000
 
         val timeLeftText: String
 
@@ -140,18 +149,18 @@ class WorkSessionActivity : AppCompatActivity() {
         countDownText.setText(timeLeftText)
 
     }
-    fun hideStartButton(){
+
+    fun hideStartButton() {
         countDownButton.visibility = View.INVISIBLE
     }
 
-    fun saveTheTime(){
-        //TODO("Save Time in DB")
+    fun saveTheTime() {
+        mService.changeRemainingMinutesByListIndex(listIndex, milliSecondsLeft)
     }
 
     override fun onPause() {
         super.onPause()
         if (timerRunning) {
-            println("PAUSE")
             stopTimer()
         }
     }
