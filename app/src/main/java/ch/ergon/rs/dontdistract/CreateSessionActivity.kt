@@ -11,10 +11,10 @@ import android.view.View
 import android.widget.CalendarView
 import android.widget.CalendarView.OnDateChangeListener
 import android.widget.EditText
-import android.widget.LinearLayout
 import ch.ergon.rs.dontdistract.model.SessionDate
 import ch.ergon.rs.dontdistract.model.WorkingSession
 import ch.ergon.rs.dontdistract.service.HandleSessionsService
+import java.time.LocalDate
 
 class CreateSessionActivity : AppCompatActivity() {
     private var currentSelectedDate: SessionDate? = null
@@ -26,7 +26,7 @@ class CreateSessionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_session)
         var dateView = findViewById<CalendarView>(R.id.dateView)
-
+        currentSelectedDate = SessionDate(LocalDate.now().year,LocalDate.now().monthValue,LocalDate.now().dayOfMonth)
 
         dateView.setOnDateChangeListener(OnDateChangeListener { view, year, month, dayOfMonth ->
             currentSelectedDate = SessionDate(year, month + 1, dayOfMonth)
@@ -39,19 +39,23 @@ class CreateSessionActivity : AppCompatActivity() {
         var stundenView = findViewById<EditText>(R.id.stundenView)
         var minutenView = findViewById<EditText>(R.id.minutenView)
 
-        val sessionName = sessionNameView.text
-        var minuten = stundenView.text.toString().toInt() * 60
-        minuten += minutenView.text.toString().toInt()
+        val sessionName = sessionNameView.text.toString()
+        var minutes = stundenView.text.toString().toInt() * 60
+        minutes += minutenView.text.toString().toInt()
 
-        //if (minuten)
+        if (minutes>0 && !sessionName.equals("") && currentSelectedDate != null){
+            val workingSession = WorkingSession(minutes , currentSelectedDate!!,sessionName)
+
+            mService.saveNewSession(workingSession)
+
+            var intent = Intent(this@CreateSessionActivity, MainActivity::class.java)
+            startActivity(intent)
+        } else {
+            TODO("Was, wenn Felder leer sind?")
+        }
 
 
-        TODO("Schauen, dass die Felder nicht leer sind.")
-        //val sessionDate = SessionDate()
-//
-        //val workingSession = WorkingSession()
-//
-        //mService.saveNewSession()
+
     }
 
     private val connection = object : ServiceConnection {
@@ -72,5 +76,11 @@ class CreateSessionActivity : AppCompatActivity() {
         Intent(this, HandleSessionsService::class.java).also { intent ->
             bindService(intent, connection, Context.BIND_AUTO_CREATE)
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(connection)
+        mBound = false
     }
 }

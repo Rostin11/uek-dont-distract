@@ -11,7 +11,6 @@ import android.os.IBinder
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
-import ch.ergon.rs.dontdistract.model.SessionDate
 import ch.ergon.rs.dontdistract.model.WorkingSession
 import ch.ergon.rs.dontdistract.service.HandleSessionsService
 import java.util.*
@@ -29,12 +28,6 @@ class MainActivity : AppCompatActivity() {
             mService = binder.getService()
             mBound = true
 
-            val workingSessionOne = WorkingSession(60, SessionDate(1, 1, 1), "One Minute")
-            val workingSessionTwo = WorkingSession(120, SessionDate(1, 1, 1), "Two Minutes")
-
-            mService.saveNewSession(workingSessionOne)
-            mService.saveNewSession(workingSessionTwo)
-
             val savedSessions = mService.getSavedSessions()
             generateButtons(savedSessions)
         }
@@ -45,10 +38,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
     }
 
     override fun onStart() {
@@ -70,6 +61,7 @@ class MainActivity : AppCompatActivity() {
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
+        sessionOverview.removeAllViews()
 
         for (i in sessions.indices) {
             val workingSession = sessions[i]

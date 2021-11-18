@@ -36,13 +36,25 @@ class HandleSessionsService : Service() {
     }
 
     fun saveNewSession(workingSession: WorkingSession) {
-
-
         val sharedPreferences = getSharedPreferences("dontDistract", Context.MODE_PRIVATE)
 
         val savedSessions = getSavedSessions().toMutableList()
 
         savedSessions.add(workingSession)
+
+        val savedSessionAsString = Json.encodeToString(savedSessions)
+
+        val editor = sharedPreferences.edit()
+        editor.putString("WORKING_SESSIONS", savedSessionAsString)
+        editor.apply()
+    }
+
+    fun deleteSessionByListIndex(listIndex: Int) {
+        val sharedPreferences = getSharedPreferences("dontDistract", Context.MODE_PRIVATE)
+
+        val savedSessions = getSavedSessions().toMutableList()
+
+        savedSessions.removeAt(listIndex)
 
         val savedSessionAsString = Json.encodeToString(savedSessions)
 

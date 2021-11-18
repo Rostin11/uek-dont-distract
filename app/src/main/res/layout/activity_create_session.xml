@@ -80,7 +80,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
-        android:text="Zu erledigem bis:"
+        android:text="Zu erledigen bis:"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/dateView"
         app:layout_constraintStart_toStartOf="parent" />
