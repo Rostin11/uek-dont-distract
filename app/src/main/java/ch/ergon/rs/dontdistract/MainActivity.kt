@@ -99,5 +99,7 @@ class MainActivity : AppCompatActivity() {
         val REMAINING_SECONDS = "remainingSeconds"
     }
 
-    fun addWorkingSession(view: View) {}
+    fun addWorkingSession(view: View) {
+        
+    }
 }
