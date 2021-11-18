@@ -14,6 +14,7 @@ import android.widget.EditText
 import ch.ergon.rs.dontdistract.model.SessionDate
 import ch.ergon.rs.dontdistract.model.WorkingSession
 import ch.ergon.rs.dontdistract.service.HandleSessionsService
+import java.lang.NumberFormatException
 import java.time.LocalDate
 
 class CreateSessionActivity : AppCompatActivity() {
@@ -40,10 +41,20 @@ class CreateSessionActivity : AppCompatActivity() {
         var minutenView = findViewById<EditText>(R.id.minutenView)
 
         val sessionName = sessionNameView.text.toString()
-        var minutes = stundenView.text.toString().toInt() * 60
-        minutes += minutenView.text.toString().toInt()
+        var minutes = 0;
 
-        if (minutes>0 && !sessionName.equals("") && currentSelectedDate != null){
+            val stundenViewText = stundenView.text.toString()
+            if (stundenViewText != "") {
+                minutes += stundenViewText.toInt() * 60
+            }
+            val minutenViewText = minutenView.text.toString()
+            if (minutenViewText != "") {
+                minutes += minutenViewText.toInt()
+            }
+
+
+
+        if (!sessionName.equals("") && currentSelectedDate != null){
             val workingSession = WorkingSession(minutes , currentSelectedDate!!,sessionName)
 
             mService.saveNewSession(workingSession)
@@ -51,7 +62,7 @@ class CreateSessionActivity : AppCompatActivity() {
             var intent = Intent(this@CreateSessionActivity, MainActivity::class.java)
             startActivity(intent)
         } else {
-            TODO("Was, wenn Felder leer sind?")
+
         }
 
 

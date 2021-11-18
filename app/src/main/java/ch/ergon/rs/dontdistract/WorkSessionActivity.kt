@@ -38,6 +38,7 @@ class WorkSessionActivity : AppCompatActivity() {
             mBound = true
             deleteButton.setOnClickListener(object : View.OnClickListener {
                 override fun onClick(v: View?) {
+                    stopTimer()
                     mService.deleteSessionByListIndex(listIndex)
                     var intent = Intent(this@WorkSessionActivity, MainActivity::class.java)
                     startActivity(intent)
@@ -86,6 +87,8 @@ class WorkSessionActivity : AppCompatActivity() {
 
         updateTimer()
 
+        if (milliSecondsLeft == 0) hideStartButton()
+
     }
 
     fun startStop(view: View) {
@@ -97,7 +100,7 @@ class WorkSessionActivity : AppCompatActivity() {
     }
 
     fun startTimer() {
-        countDownTimer = object : CountDownTimer((milliSecondsLeft).toLong(), 60000) {
+        countDownTimer = object : CountDownTimer((milliSecondsLeft).toLong(), 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 milliSecondsLeft = millisUntilFinished.toInt()
                 updateTimer()
@@ -105,8 +108,10 @@ class WorkSessionActivity : AppCompatActivity() {
 
             override fun onFinish() {
                 println("finish")
-                milliSecondsLeft = 70000
+                milliSecondsLeft = 0
                 stopTimer()
+                updateTimer()
+                hideStartButton()
             }
         }.start()
         countDownButton.setText("PAUSE")
@@ -117,6 +122,7 @@ class WorkSessionActivity : AppCompatActivity() {
         countDownTimer.cancel()
         countDownButton.setText("START")
         timerRunning = false
+        saveTheTime()
     }
 
     fun updateTimer() {
@@ -133,5 +139,20 @@ class WorkSessionActivity : AppCompatActivity() {
 
         countDownText.setText(timeLeftText)
 
+    }
+    fun hideStartButton(){
+        countDownButton.visibility = View.INVISIBLE
+    }
+
+    fun saveTheTime(){
+        //TODO("Save Time in DB")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (timerRunning) {
+            println("PAUSE")
+            stopTimer()
+        }
     }
 }
