@@ -12,7 +12,7 @@ class WorkSessionActivity : AppCompatActivity() {
     lateinit var countDownButton: Button;
 
     lateinit var countDownTimer: CountDownTimer
-     var secondsLeft = 0
+     var milliSecondsLeft = 70000
      var timerRunning: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,7 +25,7 @@ class WorkSessionActivity : AppCompatActivity() {
     }
 
     fun startStop(view: View) {
-        if(timerRunning) {
+        if(!timerRunning) {
             startTimer()
         } else {
             stopTimer()
@@ -33,14 +33,18 @@ class WorkSessionActivity : AppCompatActivity() {
     }
 
     fun startTimer(){
-        countDownTimer  = object : CountDownTimer((secondsLeft * 1000).toLong(), 1000) {
+        countDownTimer  = object : CountDownTimer((milliSecondsLeft).toLong(), 1000) {
             override fun onTick(millisUntilFinished: Long) {
-                secondsLeft = (millisUntilFinished / 1000).toInt()
+                milliSecondsLeft = millisUntilFinished.toInt()
                 updateTimer()
             }
 
-            override fun onFinish() {}
-        }
+            override fun onFinish() {
+                println("finish")
+                milliSecondsLeft = 70000
+                stopTimer()
+            }
+        }.start()
         countDownButton.setText("PAUSE")
         timerRunning = true
     }
@@ -52,8 +56,8 @@ class WorkSessionActivity : AppCompatActivity() {
     }
 
     fun updateTimer(){
-        val minutes: Int = secondsLeft / 60
-        val seconds: Int = secondsLeft % 60
+        val minutes: Int = milliSecondsLeft / 60000
+        val seconds: Int = (milliSecondsLeft % 60000) / 1000
 
         val timeLeftText: String
 
