@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.hardware.*
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -13,6 +14,7 @@ import android.widget.Button
 import android.widget.TextView
 import ch.ergon.rs.dontdistract.model.SessionDate
 import ch.ergon.rs.dontdistract.service.HandleSessionsService
+import java.lang.Exception
 
 class WorkSessionActivity : AppCompatActivity() {
     lateinit var countDownText: TextView;
@@ -28,6 +30,21 @@ class WorkSessionActivity : AppCompatActivity() {
 
     private lateinit var mService: HandleSessionsService
     private var mBound: Boolean = false
+
+    //Sensor
+    var mSensorManager : SensorManager? = null
+    var mSensorAccelerometer: Sensor? = null
+
+    private val mSensorEventListener: SensorEventListener = object : SensorEventListener {
+
+
+        override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
+
+        override fun onSensorChanged(event: SensorEvent) {
+            println(event.values.toString())
+        }
+
+    }
 
 
     private val connection = object : ServiceConnection {
@@ -49,6 +66,15 @@ class WorkSessionActivity : AppCompatActivity() {
         override fun onServiceDisconnected(arg0: ComponentName) {
             mBound = false
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mSensorManager?.registerListener(
+            mSensorEventListener,
+            mSensorAccelerometer,
+            SensorManager.SENSOR_DELAY_NORMAL
+        )
     }
 
     override fun onStart() {
@@ -89,6 +115,9 @@ class WorkSessionActivity : AppCompatActivity() {
         updateTimer()
 
         if (milliSecondsLeft == 0) hideStartButton()
+
+         mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+         mSensorAccelerometer= mSensorManager!!.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
     }
 
@@ -163,5 +192,6 @@ class WorkSessionActivity : AppCompatActivity() {
         if (timerRunning) {
             stopTimer()
         }
+        mSensorManager?.unregisterListener(mSensorEventListener)
     }
 }
