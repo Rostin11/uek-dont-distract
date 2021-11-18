@@ -16,6 +16,8 @@ import ch.ergon.rs.dontdistract.service.HandleSessionsService
 
 class WorkSessionActivity : AppCompatActivity() {
     lateinit var countDownText: TextView;
+    lateinit var sessionNameField: TextView;
+    lateinit var sessionDateField: TextView;
     lateinit var countDownButton: Button;
     lateinit var deleteButton: Button;
     var listIndex: Int = -1
@@ -73,10 +75,16 @@ class WorkSessionActivity : AppCompatActivity() {
         milliSecondsLeft = remainingMinutes * 60000
 
         countDownText = findViewById(R.id.countDownTextView)
+        sessionNameField = findViewById(R.id.sessionNameField)
+        sessionDateField = findViewById(R.id.sessionDateField)
+        countDownText = findViewById(R.id.countDownTextView)
         countDownButton = findViewById(R.id.countDownButton)
         deleteButton = findViewById(R.id.deleteButton)
 
+        sessionNameField.text = sessionName
+        sessionDateField.text = "Endet am ${endDate.day}/${endDate.month}/${endDate.year}"
 
+        updateTimer()
 
     }
 
