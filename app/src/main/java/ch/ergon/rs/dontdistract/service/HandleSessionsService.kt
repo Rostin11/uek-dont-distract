@@ -25,6 +25,7 @@ class HandleSessionsService : Service() {
 
     fun getSavedSessions(): List<WorkingSession> {
         val sharedPreferences = getSharedPreferences("dontDistract", Context.MODE_PRIVATE)
+
         val workingSessionsAsString = sharedPreferences.getString("WORKING_SESSIONS", "[]")
 
         if (workingSessionsAsString != null) {

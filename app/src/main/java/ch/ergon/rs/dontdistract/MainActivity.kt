@@ -14,7 +14,6 @@ import android.widget.LinearLayout
 import ch.ergon.rs.dontdistract.model.SessionDate
 import ch.ergon.rs.dontdistract.model.WorkingSession
 import ch.ergon.rs.dontdistract.service.HandleSessionsService
-import java.time.LocalDate
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -84,7 +83,7 @@ class MainActivity : AppCompatActivity() {
                     intent.putExtra(LIST_INDEX, i)
                     intent.putExtra(NAME, workingSession.name)
                     intent.putExtra(END_DATE, workingSession.endDate)
-                    intent.putExtra(REMAINING_SECONDS, workingSession.remainingSeconds)
+                    intent.putExtra(REMAINING_SECONDS, workingSession.remainingMinutes)
                     startActivity(intent)
                 }
             })
@@ -100,6 +99,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun addWorkingSession(view: View) {
-        
+        var intent = Intent(this@MainActivity, CreateSessionActivity::class.java)
+        startActivity(intent)
     }
 }

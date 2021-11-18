@@ -7,15 +7,13 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import ch.ergon.rs.dontdistract.model.SessionDate
-import java.time.LocalDate
-import java.util.*
 
 class WorkSessionActivity : AppCompatActivity() {
     lateinit var countDownText: TextView;
     lateinit var countDownButton: Button;
 
     lateinit var countDownTimer: CountDownTimer
-    var milliSecondsLeft = 70000
+    var milliSecondsLeft = 60000
     var timerRunning: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,10 +22,10 @@ class WorkSessionActivity : AppCompatActivity() {
 
         val listIndex = intent.extras?.get(MainActivity.LIST_INDEX).toString().toInt()
         val sessionName = intent.extras?.get(MainActivity.NAME).toString()
-        val remainingSeconds = intent.extras?.get(MainActivity.REMAINING_SECONDS).toString().toInt()
+        val remainingMinutes = intent.extras?.get(MainActivity.REMAINING_SECONDS).toString().toInt()
         val endDate = intent.extras?.get(MainActivity.END_DATE) as SessionDate
 
-        milliSecondsLeft = remainingSeconds * 1000
+        milliSecondsLeft = remainingMinutes * 60000
 
         countDownText = findViewById(R.id.countDownTextView)
         countDownButton = findViewById(R.id.countDownButton)
@@ -43,7 +41,7 @@ class WorkSessionActivity : AppCompatActivity() {
     }
 
     fun startTimer() {
-        countDownTimer = object : CountDownTimer((milliSecondsLeft).toLong(), 1000) {
+        countDownTimer = object : CountDownTimer((milliSecondsLeft).toLong(), 60000) {
             override fun onTick(millisUntilFinished: Long) {
                 milliSecondsLeft = millisUntilFinished.toInt()
                 updateTimer()
@@ -66,15 +64,15 @@ class WorkSessionActivity : AppCompatActivity() {
     }
 
     fun updateTimer() {
-        val minutes: Int = milliSecondsLeft / 60000
-        val seconds: Int = (milliSecondsLeft % 60000) / 1000
+        val hours: Int = milliSecondsLeft / 3600000
+        val minutes: Int = (milliSecondsLeft % 3600000) / 60000
 
         val timeLeftText: String
 
-        if (seconds < 10) {
-            timeLeftText = "$minutes:0$seconds"
+        if (minutes < 10) {
+            timeLeftText = "$hours:0$minutes"
         } else {
-            timeLeftText = "$minutes:$seconds"
+            timeLeftText = "$hours:$minutes"
         }
 
         countDownText.setText(timeLeftText)
