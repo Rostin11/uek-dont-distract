@@ -9,6 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DontDistract">
+        <service
+            android:name=".service.HandleSessionsService"
+            android:enabled="true"
+            android:exported="true"></service>
+
         <activity
             android:name=".WorkSessionActivity"
             android:exported="false" />

@@ -1,28 +1,103 @@
 package ch.ergon.rs.dontdistract
 
+import android.app.ActionBar
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.IBinder
 import android.view.View
-import android.widget.EditText
+import android.widget.Button
+import android.widget.LinearLayout
+import ch.ergon.rs.dontdistract.model.SessionDate
+import ch.ergon.rs.dontdistract.model.WorkingSession
+import ch.ergon.rs.dontdistract.service.HandleSessionsService
+import java.time.LocalDate
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+
+    private lateinit var mService: HandleSessionsService
+    private var mBound: Boolean = false
+
+
+    private val connection = object : ServiceConnection {
+
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            val binder = service as HandleSessionsService.LocalBinder
+            mService = binder.getService()
+            mBound = true
+
+            val workingSessionOne = WorkingSession(60, SessionDate(1, 1, 1), "One Minute")
+            val workingSessionTwo = WorkingSession(120, SessionDate(1, 1, 1), "Two Minutes")
+
+            mService.saveNewSession(workingSessionOne)
+            mService.saveNewSession(workingSessionTwo)
+
+            val savedSessions = mService.getSavedSessions()
+            generateButtons(savedSessions)
+        }
+
+        override fun onServiceDisconnected(arg0: ComponentName) {
+            mBound = false
+        }
     }
 
-    fun open(view: View) {
-        var intent = Intent(this@MainActivity, WorkSessionActivity::class.java)
+    override fun onCreate(savedInstanceState: Bundle?) {
+
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Intent(this, HandleSessionsService::class.java).also { intent ->
+            bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(connection)
+        mBound = false
+    }
+
+    fun generateButtons(sessions: List<WorkingSession>) {
+        var sessionOverview = findViewById<LinearLayout>(R.id.sessionsOverview)
+        val lp = ActionBar.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+
+        for (i in sessions.indices) {
+            val workingSession = sessions[i]
+            val myButton = Button(this)
+            myButton.setText(workingSession.name)
+            myButton.setOnClickListener(object : View.OnClickListener {
+                override fun onClick(v: View?) {
+                    var intent = Intent(this@MainActivity, WorkSessionActivity::class.java)
 
 
-        //intent.putExtra(WEIGHT, textWeight.text)
-        //intent.putExtra(HEIGHT, textHight.text)
-        startActivity(intent)
+                    intent.putExtra(LIST_INDEX, i)
+                    intent.putExtra(NAME, workingSession.name)
+                    intent.putExtra(END_DATE, workingSession.endDate)
+                    intent.putExtra(REMAINING_SECONDS, workingSession.remainingSeconds)
+                    startActivity(intent)
+                }
+            })
+            sessionOverview.addView(myButton, lp);
+        }
     }
 
     companion object {
-        val WEIGHT = "weight"
-        val HEIGHT = "height"
+        val LIST_INDEX = "listIndex"
+        val NAME = "name"
+        val END_DATE = "endDate"
+        val REMAINING_SECONDS = "remainingSeconds"
     }
+
+    fun addWorkingSession(view: View) {}
 }
