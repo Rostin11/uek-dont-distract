@@ -4,17 +4,15 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
 import android.view.View
 import android.widget.CalendarView
-import android.widget.CalendarView.OnDateChangeListener
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
 import ch.ergon.rs.dontdistract.model.SessionDate
 import ch.ergon.rs.dontdistract.model.WorkingSession
 import ch.ergon.rs.dontdistract.service.HandleSessionsService
-import java.lang.NumberFormatException
 import java.time.LocalDate
 
 class CreateSessionActivity : AppCompatActivity() {
@@ -26,26 +24,26 @@ class CreateSessionActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_session)
-        var dateView = findViewById<CalendarView>(R.id.dateView)
+        val dateView = findViewById<CalendarView>(R.id.dateView)
         currentSelectedDate = SessionDate(
             LocalDate.now().year,
             LocalDate.now().monthValue,
             LocalDate.now().dayOfMonth
         )
 
-        dateView.setOnDateChangeListener(OnDateChangeListener { view, year, month, dayOfMonth ->
+        dateView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             currentSelectedDate = SessionDate(year, month + 1, dayOfMonth)
-        })
+        }
     }
 
     fun createSession(view: View) {
 
-        var sessionNameView = findViewById<EditText>(R.id.sessionNameView)
-        var stundenView = findViewById<EditText>(R.id.stundenView)
-        var minutenView = findViewById<EditText>(R.id.minutenView)
+        val sessionNameView = findViewById<EditText>(R.id.sessionNameView)
+        val stundenView = findViewById<EditText>(R.id.stundenView)
+        val minutenView = findViewById<EditText>(R.id.minutenView)
 
         val sessionName = sessionNameView.text.toString()
-        var minutes = 0;
+        var minutes = 0
 
         val stundenViewText = stundenView.text.toString()
         if (stundenViewText != "") {
@@ -58,15 +56,13 @@ class CreateSessionActivity : AppCompatActivity() {
 
 
 
-        if (!sessionName.equals("") && currentSelectedDate != null) {
+        if (sessionName != "" && currentSelectedDate != null) {
             val workingSession = WorkingSession(minutes * 60000, currentSelectedDate!!, sessionName)
 
             mService.saveNewSession(workingSession)
 
-            var intent = Intent(this@CreateSessionActivity, MainActivity::class.java)
+            val intent = Intent(this@CreateSessionActivity, MainActivity::class.java)
             startActivity(intent)
-        } else {
-
         }
 
 

@@ -9,7 +9,6 @@ import ch.ergon.rs.dontdistract.model.WorkingSession
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.lang.Exception
 
 class HandleSessionsService : Service() {
     private val binder = LocalBinder()
@@ -66,7 +65,7 @@ class HandleSessionsService : Service() {
     fun changeRemainingMinutesByListIndex(listIndex: Int, newRemainingMilliSeconds: Int) {
         val sharedPreferences = getSharedPreferences("dontDistract", Context.MODE_PRIVATE)
 
-        var savedSessions = getSavedSessions().toMutableList()
+        val savedSessions = getSavedSessions().toMutableList()
 
         val sessionToChange = savedSessions[listIndex]
 

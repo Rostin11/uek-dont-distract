@@ -5,31 +5,29 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.hardware.*
-import androidx.appcompat.app.AppCompatActivity
+import android.os.*
 import android.view.View
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import ch.ergon.rs.dontdistract.model.SessionDate
 import ch.ergon.rs.dontdistract.service.HandleSessionsService
 import kotlin.math.acos
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
-import android.os.*
-import android.view.WindowManager
-import java.lang.StringBuilder
-
 
 class WorkSessionActivity : AppCompatActivity() {
-    lateinit var countDownText: TextView
-    lateinit var sessionNameField: TextView
-    lateinit var sessionDateField: TextView
-    lateinit var countDownButton: Button
+    private lateinit var countDownText: TextView
+    private lateinit var sessionNameField: TextView
+    private lateinit var sessionDateField: TextView
+    private lateinit var countDownButton: Button
     lateinit var deleteButton: Button
     var listIndex: Int = -1
 
     lateinit var countDownTimer: CountDownTimer
-    var milliSecondsLeft = 60000
+    var milliSecondsLeft = 0
     var timerRunning: Boolean = false
 
     private lateinit var mService: HandleSessionsService
@@ -45,7 +43,7 @@ class WorkSessionActivity : AppCompatActivity() {
         override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
 
         override fun onSensorChanged(event: SensorEvent) {
-            var g: FloatArray = event.values.clone()
+            val g: FloatArray = event.values.clone()
 
             val normOfG: Float = sqrt((g[0] * g[0] + g[1] * g[1] + g[2] * g[2]))
 
@@ -85,7 +83,7 @@ class WorkSessionActivity : AppCompatActivity() {
             deleteButton.setOnClickListener {
                 timerRunning = false
                 mService.deleteSessionByListIndex(listIndex)
-                var intent = Intent(this@WorkSessionActivity, MainActivity::class.java)
+                val intent = Intent(this@WorkSessionActivity, MainActivity::class.java)
                 startActivity(intent)
             }
         }
@@ -172,31 +170,25 @@ class WorkSessionActivity : AppCompatActivity() {
                 playAlarm()
             }
         }.start()
-        countDownButton.setText("PAUSE")
+        countDownButton.text = "PAUSE"
         timerRunning = true
     }
 
     fun stopTimer() {
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         countDownTimer.cancel()
-        countDownButton.setText("START")
+        countDownButton.text = "START"
         timerRunning = false
         saveTheTime()
     }
 
     fun updateTimer() {
         val millisecondsToShow: Int = milliSecondsLeft
-
-        //if (milliSecondsLeft % 60000 == 0) {
-        //    millisecondsToShow = milliSecondsLeft
-        //} else {
-        //    millisecondsToShow = milliSecondsLeft + 60000
-        //}
         val hours: Int = millisecondsToShow / 3600000
         val minutes: Int = millisecondsToShow % 3600000 / 60000
-        val seconds: Int = millisecondsToShow % 3600000 % 60000 / 1000
+        val seconds: Int = millisecondsToShow % 60000 / 1000
 
-        var timeStringBuilder = StringBuilder()
+        val timeStringBuilder = StringBuilder()
 
         timeStringBuilder.append("$hours:")
 
@@ -211,7 +203,7 @@ class WorkSessionActivity : AppCompatActivity() {
             timeStringBuilder.append("$seconds")
         }
 
-        countDownText.setText(timeStringBuilder.toString())
+        countDownText.text = timeStringBuilder.toString()
 
     }
 
@@ -232,17 +224,13 @@ class WorkSessionActivity : AppCompatActivity() {
         mSensorManager?.unregisterListener(mSensorEventListener)
     }
 
-    fun playAlarm(){
+    fun playAlarm() {
         vibrate(5000)
     }
 
-    private fun vibrate(length: Int){
+    private fun vibrate(length: Int) {
         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator.vibrate(VibrationEffect.createOneShot(length.toLong(), 255))
-        } else {
-            vibrator.vibrate(5000)
-        }
+        vibrator.vibrate(VibrationEffect.createOneShot(length.toLong(), 255))
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {

@@ -5,12 +5,12 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
 import ch.ergon.rs.dontdistract.model.WorkingSession
 import ch.ergon.rs.dontdistract.service.HandleSessionsService
 import java.util.*
@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun generateButtons(sessions: List<WorkingSession>) {
-        var sessionOverview = findViewById<LinearLayout>(R.id.sessionsOverview)
+        val sessionOverview = findViewById<LinearLayout>(R.id.sessionsOverview)
         val lp = ActionBar.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
@@ -66,32 +66,30 @@ class MainActivity : AppCompatActivity() {
         for (i in sessions.indices) {
             val workingSession = sessions[i]
             val myButton = Button(this)
-            myButton.setText(workingSession.name)
-            myButton.setOnClickListener(object : View.OnClickListener {
-                override fun onClick(v: View?) {
-                    var intent = Intent(this@MainActivity, WorkSessionActivity::class.java)
+            myButton.text = workingSession.name
+            myButton.setOnClickListener {
+                val intent = Intent(this@MainActivity, WorkSessionActivity::class.java)
 
 
-                    intent.putExtra(LIST_INDEX, i)
-                    intent.putExtra(NAME, workingSession.name)
-                    intent.putExtra(END_DATE, workingSession.endDate)
-                    intent.putExtra(REMAINING_SECONDS, workingSession.remainingMilliSeconds)
-                    startActivity(intent)
-                }
-            })
-            sessionOverview.addView(myButton, lp);
+                intent.putExtra(LIST_INDEX, i)
+                intent.putExtra(NAME, workingSession.name)
+                intent.putExtra(END_DATE, workingSession.endDate)
+                intent.putExtra(REMAINING_SECONDS, workingSession.remainingMilliSeconds)
+                startActivity(intent)
+            }
+            sessionOverview.addView(myButton, lp)
         }
     }
 
     companion object {
-        val LIST_INDEX = "listIndex"
-        val NAME = "name"
-        val END_DATE = "endDate"
-        val REMAINING_SECONDS = "remainingSeconds"
+        const val LIST_INDEX = "listIndex"
+        const val NAME = "name"
+        const val END_DATE = "endDate"
+        const val REMAINING_SECONDS = "remainingSeconds"
     }
 
     fun addWorkingSession(view: View) {
-        var intent = Intent(this@MainActivity, CreateSessionActivity::class.java)
+        val intent = Intent(this@MainActivity, CreateSessionActivity::class.java)
         startActivity(intent)
     }
 }
