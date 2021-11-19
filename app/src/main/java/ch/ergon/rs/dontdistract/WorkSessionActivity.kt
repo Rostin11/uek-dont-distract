@@ -14,7 +14,9 @@ import android.widget.Button
 import android.widget.TextView
 import ch.ergon.rs.dontdistract.model.SessionDate
 import ch.ergon.rs.dontdistract.service.HandleSessionsService
-import java.lang.Exception
+import kotlin.math.acos
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 class WorkSessionActivity : AppCompatActivity() {
     lateinit var countDownText: TextView;
@@ -32,7 +34,7 @@ class WorkSessionActivity : AppCompatActivity() {
     private var mBound: Boolean = false
 
     //Sensor
-    var mSensorManager : SensorManager? = null
+    var mSensorManager: SensorManager? = null
     var mSensorAccelerometer: Sensor? = null
 
     private val mSensorEventListener: SensorEventListener = object : SensorEventListener {
@@ -41,7 +43,31 @@ class WorkSessionActivity : AppCompatActivity() {
         override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
 
         override fun onSensorChanged(event: SensorEvent) {
-            println(event.values.toString())
+            var g: FloatArray = event.values.clone()
+
+            val normOfG: Float = sqrt((g[0] * g[0] + g[1] * g[1] + g[2] * g[2]))
+
+            g[0] = g[0] / normOfG
+            g[1] = g[1] / normOfG
+            g[2] = g[2] / normOfG
+
+            val inclination = Math.toDegrees(
+                acos(
+                    g[2].toDouble()
+                )
+            ).roundToInt()
+
+            if ((inclination < 25 || inclination > 155) && milliSecondsLeft != 0) {
+                // device is flat
+                showStartButton()
+            } else {
+                // device is not flat
+                if (timerRunning) {
+                    stopTimer()
+                }
+                hideStartButton()
+            }
+
         }
 
     }
@@ -116,8 +142,8 @@ class WorkSessionActivity : AppCompatActivity() {
 
         if (milliSecondsLeft == 0) hideStartButton()
 
-         mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-         mSensorAccelerometer= mSensorManager!!.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        mSensorAccelerometer = mSensorManager!!.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
     }
 
@@ -181,6 +207,10 @@ class WorkSessionActivity : AppCompatActivity() {
 
     fun hideStartButton() {
         countDownButton.visibility = View.INVISIBLE
+    }
+
+    fun showStartButton() {
+        countDownButton.visibility = View.VISIBLE
     }
 
     fun saveTheTime() {
