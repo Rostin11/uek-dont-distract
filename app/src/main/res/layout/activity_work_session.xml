@@ -8,60 +8,64 @@
 
     <TextView
         android:id="@+id/countDownTextView"
-        android:layout_width="203dp"
-        android:layout_height="61dp"
-        android:layout_marginStart="104dp"
-        android:layout_marginBottom="20dp"
-        android:text="TextView"
+        android:layout_width="370dp"
+        android:layout_height="47dp"
+        android:text="ERROR"
         android:textAlignment="center"
         android:textSize="34sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/countDownButton"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/countDownButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="160dp"
+        android:layout_width="164dp"
+        android:layout_height="64dp"
         android:layout_marginBottom="20dp"
         android:onClick="startStop"
         android:text="START"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/deleteButton"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
     <Button
         android:id="@+id/deleteButton"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="152dp"
         android:layout_marginBottom="88dp"
         android:text="LÖSCHEN"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        tools:layout_editor_absoluteX="152dp" />
 
     <TextView
         android:id="@+id/sessionNameField"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         android:layout_width="333dp"
         android:layout_height="44dp"
-        android:layout_marginStart="45dp"
         android:layout_marginTop="40dp"
         android:text="TextView"
         android:textAlignment="center"
         android:textSize="34sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="45dp" />
 
     <TextView
         android:id="@+id/sessionDateField"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         android:layout_width="337dp"
         android:layout_height="28dp"
-        android:layout_marginStart="44dp"
         android:layout_marginTop="24dp"
         android:text="TextView"
         android:textAlignment="center"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sessionNameField" />
+        app:layout_constraintTop_toBottomOf="@+id/sessionNameField"
+        tools:layout_editor_absoluteX="44dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
